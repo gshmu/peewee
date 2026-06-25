@@ -79,14 +79,17 @@ def model_to_dict(model, recurse=True, backrefs=False, only=None,
         if isinstance(field, ForeignKeyField) and recurse:
             if field_data is not None:
                 rel_obj = getattr(model, field.name)
-                field_data = model_to_dict(
-                    rel_obj,
-                    recurse=recurse,
-                    backrefs=backrefs,
-                    only=only,
-                    exclude=exclude,
-                    seen=seen | set((field,)),
-                    max_depth=max_depth - 1)
+                if isinstance(rel_obj, int):
+                    field_data = rel_obj
+                else:
+                    field_data = model_to_dict(
+                        rel_obj,
+                        recurse=recurse,
+                        backrefs=backrefs,
+                        only=only,
+                        exclude=exclude,
+                        seen=seen | set((field,)),
+                        max_depth=max_depth - 1)
             else:
                 field_data = None
 
